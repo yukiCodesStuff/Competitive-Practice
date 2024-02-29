@@ -11,15 +11,21 @@ int main()
 
     int remainingTasks = l % m;
     if (remainingTasks)
-        totalTime += q;
-
-    // handling remaining machines
-    int remainingMachines = m - remainingTasks; // left over free machines
-    s -= remainingMachines * q;
-
-    if (s > 0)
     {
-        totalTime += (s / m) + (s % m);
+        totalTime += q;
+        // handling remaining machines
+        int remainingMachines = m - remainingTasks; // left over free machines
+        s -= remainingMachines * q;
+
+        if (s > 0)
+            totalTime += (s / m) + (s % m);
+    }
+    else
+    {
+        totalTime += (s / m);
+        remainingTasks = s % m;
+        if (remainingTasks)
+            totalTime++;
     }
 
     cout << totalTime << endl;
