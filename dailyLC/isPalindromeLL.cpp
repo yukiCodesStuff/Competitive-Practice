@@ -1,4 +1,4 @@
-#include <stack>
+#include <iostream>
 
 using namespace std;
 
@@ -12,26 +12,32 @@ struct ListNode {
 
 class Solution {
 public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode* curr = head;
+        ListNode* prev = nullptr;
+        while (curr) {
+            ListNode* next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next;
+        }
+        return prev;
+    }
+
     bool isPalindrome(ListNode* head) {
         ListNode* slow = head;
         ListNode* fast = head;
-        stack<int> s;
         while (fast && fast->next) {
-            s.push(slow->val);
             slow = slow->next;
             fast = fast->next->next;
         }
 
-        // odd size ll
-        if (fast) {
-            s.push(slow->val);
-        }
-
-        while (!s.empty()) {
-            if (!slow) return false;
-            if (slow->val != s.top()) return false;
-            s.pop();
-            slow = slow->next;
+        ListNode* reversedList = reverseList(slow);
+        
+        while (head && reversedList) {
+            if (head->val != reversedList->val) return false;
+            head = head->next;
+            reversedList = reversedList->next;
         }
 
         return true;
