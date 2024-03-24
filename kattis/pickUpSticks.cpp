@@ -1,55 +1,54 @@
 #include <iostream>
-#include <unordered_map>
+#include <unordered_set>
 #include <stack>
-#include <queue>
 #include <vector>
+#include <queue>
 
 using namespace std;
 
 vector<vector<int>> adj_list;
-vector<int> indegrees;
 vector<bool> visited;
-queue<int> q;
+queue<int> ordering;
 
-void dfs(int i) {
-    if (visited[i]) return;
-    visited[i] = true;
-    q.push(i);
-    for (int n : adj_list[i]) {
-        dfs(n);
-        indegrees[n]--;
+bool dfs(int s, unordered_set<int> &seen) {
+    if (seen.find(s) != seen.end()) return false; // cycle detected
+    if (visited[s]) return true;
+    visited[s] = true;
+    seen.insert(s);
+    for (int x : adj_list[s]) {
+        if (!dfs(x, seen)) {
+            return false;
+        } 
     }
+
+    seen.erase(s);
+    ordering.push(s);
+    return true;
 }
 
 int main() {
-    int n, m;
-    cin >> n >> m;
-
-    adj_list.assign(n + 1, {});
-    indegrees.assign(n + 1, 0);
+    int n, m; cin >> n >> m;
+    adj_list.resize(n + 1);
     visited.assign(n + 1, false);
-
     while (m--) {
-        int x, y; cin >> x >> y;
-        adj_list[x].push_back(y);
-        indegrees[y]++;
+        int a, b; cin >> a >> b;
+        adj_list[b].push_back(a);
     }
 
-    for (int i = 0; i <= n; ++i) {
+    // explore nodes 1 to n
+    for (int i = 1; i <= n; ++i) {
         if (!visited[i]) {
-            dfs(i);
+            // dfs(i);
+            unordered_set<int> seen = {};
+            if (!dfs(i, seen)) {
+                cout << "IMPOSSIBLE" << endl;
+                return 0;
+            }
         }
     }
-
-    while (!q.empty()) {
-        cout << q.front() << endl;
-        q.pop();
-    }
-
-    cout << endl;
-
-    for (int n : indegrees) {
-        cout << n << endl;
+    while (!ordering.empty()) {
+        cout << ordering.front() << endl;
+        ordering.pop();
     }
 
     return 0;
