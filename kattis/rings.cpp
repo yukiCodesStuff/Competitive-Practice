@@ -6,9 +6,12 @@
 using namespace std;
 
 typedef vector<vector<char>> vvc;
+typedef vector<vector<int>> vvi;
+typedef vector<vector<string>> vvs;
 
 set<vector<int>> visited;
 int markingNum = 1;
+vvi res;
 
 void dfs(int row, int col, vvc &board) {
     // cout << row << " " << col << endl;
@@ -43,6 +46,7 @@ void dfs(int row, int col, vvc &board) {
     ) {
         // board[row][col] = 'M';
         board[row][col] = markingNum + '0';
+        res[row][col] = markingNum;
         visited.insert({row, col});
 
         // diagonals
@@ -65,6 +69,7 @@ int main() {
     cin >> m >> n;
 
     vvc grid(m, vector<char>(n));
+    res.assign(m, vector<int>(n));
     for (int i = 0; i < m; ++i) {
         for (int j = 0; j < n; ++j) {
             cin >> grid[i][j];
@@ -99,21 +104,19 @@ int main() {
 
     // cout << endl;
 
-    // building res
-    vvc res(m, vector<char>(2*n));
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < 2*n; ++j) {
-            if (j % 2 == 0) {
-                res[i][j] = '.';
-            } else {
-                res[i][j] = grid[i][j / 2];
-            }
-        }
-    }
+    // for (auto row : res) {
+    //     for (auto v : row) {
+    //         cout << v << " ";
+    //     }
+    //     cout << endl;
+    // }
 
-    for (auto row : res) {
-        for (auto v : row) {
-            cout << v;
+    // cout << endl;
+
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (!res[i][j]) cout << "..";
+            else cout << "." << res[i][j];
         }
         cout << endl;
     }

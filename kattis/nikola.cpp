@@ -6,9 +6,9 @@
 
 using namespace std;
 
-int minPathVal = INT_MAX;
 map<vector<int>, int> memo;
 
+// remove the pathval from the parameters
 int backtrack(int i, int prevJump, int pathVal, vector<int> &board) {
     vector<int> key = {i, prevJump};
     if (memo.find(key) != memo.end()) {
@@ -16,31 +16,19 @@ int backtrack(int i, int prevJump, int pathVal, vector<int> &board) {
     }
     
     if (i < 0 || i >= board.size()) {
-        return 0; // out of bounds
+        return INT_MAX; // out of bounds
     } else if (i == board.size() - 1) {
         return pathVal;
     }
 
     int nextJump = prevJump + 1; // jump forward
-    // return min(backtrack(i + nextJump, nextJump, pathVal + board[i + nextJump], board), 
+    // memo[key] = pathVal;
+    memo[key] = min(backtrack(i + nextJump, nextJump, pathVal + board[i + nextJump], board), 
+        backtrack(i - prevJump, prevJump, pathVal + board[i - prevJump], board));
+    return memo[key];
+
+    // return  min(backtrack(i + nextJump, nextJump, pathVal + board[i + nextJump], board), 
     //     backtrack(i - prevJump, prevJump, pathVal + board[i - prevJump], board));
-    int left = backtrack(i + nextJump, nextJump, pathVal + board[i + nextJump], board);
-    int right = backtrack(i - prevJump, prevJump, pathVal + board[i - prevJump], board);
-
-    // cout << "Index: " << i << endl; 
-    // cout << left << endl;
-    // cout << right << endl;
-    // cout << endl;
-
-    if (left && right) {
-        minPathVal = min(left, right);
-    } else if (left) {
-        minPathVal = min(minPathVal, left);
-    } else if (right) {
-        minPathVal = min(minPathVal, right);
-    }
-
-    return 0;
 }
 
 int main() {
@@ -50,8 +38,8 @@ int main() {
         cin >> board[board.size() - n - 1];
     }
 
-    int throwAway = backtrack(1, 1, board[1], board);
-    cout << minPathVal << endl;
+    int minVal = backtrack(1, 1, board[1], board);
+    cout << minVal << endl;
 
     return 0;
 }
