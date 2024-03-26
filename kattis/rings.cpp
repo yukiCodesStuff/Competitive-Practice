@@ -1,100 +1,36 @@
-#include <vector>
 #include <iostream>
-#include <string>
-#include <set>
+#include <queue>
+#include <vector>
+#include <utility>
 
 using namespace std;
 
-typedef vector<vector<char>> vvc;
-typedef vector<vector<int>> vvi;
-typedef vector<vector<string>> vvs;
+typedef pair<int, int> pii;
 
-set<vector<int>> visited;
-int markingNum = 1;
-vvi res;
-
-void dfs(int row, int col, vvc &board) {
-    // cout << row << " " << col << endl;
-    if (
-        visited.find({row, col}) != visited.end() ||
-        row < 0 || row >= board.size() ||
-        col < 0 || col >= board[0].size() ||
-        board[row][col] == '.'
-    ) return;
-    if (
-        (
-            // if on the outer edge
-            row - 1 < 0 || row + 1 >= board.size() ||
-            col - 1 < 0 || col + 1 >= board[0].size()
-        ) 
-        ||
-        (
-            // if touching a '.'
-            (
-                row - 1 >= 0 && row + 1 < board.size() &&
-                col - 1 >= 0 && col + 1 < board[0].size()
-            ) &&
-            board[row + 1][col] == '.' ||
-            board[row - 1][col] == '.' ||
-            board[row][col + 1] == '.' ||
-            board[row][col - 1] == '.' || 
-            board[row + 1][col] == markingNum - 1 + '0' ||
-            board[row - 1][col] == markingNum - 1 + '0' ||
-            board[row][col + 1] == markingNum - 1 + '0' ||
-            board[row][col - 1] == markingNum - 1 + '0'
-        ) 
-    ) {
-        // board[row][col] = 'M';
-        board[row][col] = markingNum + '0';
-        res[row][col] = markingNum;
-        visited.insert({row, col});
-
-        // diagonals
-        dfs(row + 1, col + 1, board);
-        dfs(row - 1, col + 1, board);
-        dfs(row + 1, col - 1, board);
-        dfs(row - 1, col - 1, board);
-
-        // laterals
-        dfs(row + 1, col, board);
-        dfs(row - 1, col, board);
-        dfs(row, col + 1, board);
-        dfs(row, col - 1, board);
-    }
-}
+vector<pii> dirs = {
+    {0, -1},
+    {1, -1},
+    {1, 0},
+    {1, 1},
+    {0, 1},
+    {-1, 1},
+    {-1, 0},
+    {-1, -1}
+};
 
 int main() {
 
-    int m, n;
-    cin >> m >> n;
-
-    vvc grid(m, vector<char>(n));
-    res.assign(m, vector<int>(n));
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < n; ++j) {
-            cin >> grid[i][j];
+    // make board with boundary
+    int m, n; cin >> m >> n;
+    vector<vector<char>> grid(m + 2, vector<char>(n + 2, '.'));
+    for (int i = 1; i < m + 1; ++i) {
+        for (int j = 1; j < n + 1; ++j) {
+            char tile; cin >> tile;
+            grid[i][j] = tile;
         }
     }
 
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < n; ++j) {
-            if (grid[i][j] == 'T') {
-                // cout << "called at " << i << ", " << j << endl;
-                dfs(i, j, grid);
-                // cout << endl;
-                // for (auto row : grid) {
-                //     for (auto v : row) {
-                //         cout << v;
-                //     }
-                //     cout << endl;
-                // }
-                markingNum++;
-            }
-        }
-    }
-
-    // cout << endl;
-
+    // check board
     // for (auto row : grid) {
     //     for (auto v : row) {
     //         cout << v;
@@ -102,21 +38,42 @@ int main() {
     //     cout << endl;
     // }
 
-    // cout << endl;
+    vector<vector<int>> ring(m, vector<int>(n, 0));
+    for (int i = 1; i < m + 1; ++i) {
+        for (int j = 1; j < n + 1; ++j) {
+            if (
+                grid[i][j] == '.' && (
+                    grid[i][j - 1] == 'T' ||
+                    grid[i][j + 1] == 'T' ||
+                    grid[i - 1][j] == 'T' ||
+                    grid[i + 1][j] == 'T' 
+                )
+            ) {
+                // do BFS
+                queue<pii> q;
+                q.push({i, j});
+                while (!q.empty()) {
+                    pii coord = q.front();
+                    int x = coord.first;
+                    int y = coord.second;
+                    q.pop();
+                    for (pii d : dirs) {
+                        int dx = d.first;
+                        int dy = d.second;
+                        if (grid[x + dx][y + dy] == 'T') {
+                            q.push({x + dx, y + dy});
+                            grid[x + dx][y + dy] = 'M';
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-    // for (auto row : res) {
-    //     for (auto v : row) {
-    //         cout << v << " ";
-    //     }
-    //     cout << endl;
-    // }
-
-    // cout << endl;
-
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < n; ++j) {
-            if (!res[i][j]) cout << "..";
-            else cout << "." << res[i][j];
+    // check board
+    for (auto row : grid) {
+        for (auto v : row) {
+            cout << v;
         }
         cout << endl;
     }

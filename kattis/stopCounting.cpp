@@ -1,55 +1,35 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
+typedef vector<int> vi;
+
 int main() {
-
-    int n; cin >> n;
-    vector<int> cards(n);
-    for (int i = 0; i < n; ++i) {
-        cin >> cards[i];
+    int m; cin >> m;
+    vi c(m);
+    while (m--) {
+        cin >> c[c.size() - m - 1];
     }
-
-    float leftRunningAvg = 0;
-    float rightRunningAvg = 0;
-
-    int left = 0, right = n - 1;
+    
+    float leftMax = 0, rightMax = 0;
+    float leftRunningAvg = 0, rightRunningAvg = 0;
     int leftSum = 0, rightSum = 0;
-    int leftCt = 0, rightCt = 0;
-    while (left < n) {
-        leftCt++;
-        leftSum += cards[left];
-        float newAvg = (float)leftSum / leftCt;
-        if (newAvg < leftRunningAvg) {
-            leftCt--;
-            leftSum -= cards[left];
-            break;
-        }
-        else leftRunningAvg = newAvg;
-
-        left++;
+    for (int i = 1; i <= c.size(); ++i) {
+        leftSum += c[i - 1];
+        leftRunningAvg = (float)leftSum / i;
+        leftMax = max(leftMax, leftRunningAvg);
+    }
+    reverse(c.begin(), c.end());
+    for (int i = 1; i <= c.size(); ++i) {
+        rightSum += c[i - 1];
+        rightRunningAvg = (float)rightSum / i;
+        rightMax = max(rightMax, rightRunningAvg);
     }
 
-    while (right >= 0) {
-        rightCt++;
-        rightSum += cards[right];
-        float newAvg = (float)rightSum / rightCt;
-        if (newAvg < rightRunningAvg) {
-            rightCt--;
-            rightSum -= cards[right];
-            break;
-        }
-        else rightRunningAvg = newAvg;
-
-        right--;
-    }
-
-    // cout << leftRunningAvg << endl;
-    // cout << rightRunningAvg << endl;
-
-    if (!leftCt && !rightCt) cout << 0 << endl;
-    else cout << (float)(leftSum + rightSum) / (float)(leftCt + rightCt) << endl;
+    if (leftMax < 0 && rightMax < 0) cout << 0 << endl;
+    else cout << max(leftMax, rightMax) << endl;
 
     return 0;
 }
