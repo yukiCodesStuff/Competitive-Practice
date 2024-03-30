@@ -7,12 +7,12 @@ using namespace std;
 
 typedef pair<int, int> pii;
 
-float calcDist(float time, vector<pii>& path) {
-    float totalDistance = 0;
-    float totalTime = 0;
+double calcDist(double time, vector<pii>& path) {
+    double totalDistance = 0;
+    double totalTime = 0;
     for (pii step : path) {
         if (time <= totalTime + step.first) {
-            float slope = (float)step.second / step.first;
+            double slope = (double)step.second / step.first;
             totalDistance += slope * (time - totalTime);
             return totalDistance;
         }
@@ -24,7 +24,7 @@ float calcDist(float time, vector<pii>& path) {
 
 int main() {
     int a, d; cin >> a >> d;
-    float epsilon = pow(10, -5);
+    double epsilon = pow(10, -5);
     vector<pii> ascent(a);
     vector<pii> descent(d);
     // remember to calculate the total time taken on ascent and descent for upper bound
@@ -41,12 +41,12 @@ int main() {
     }
 
     // cout << calcAscent(3.5, ascent) << endl;
-    float lower = 0, upper = (float)totalTime;
+    double lower = 0, upper = (double)totalTime;
     while (abs(upper - lower) > epsilon) {
-        float middle = (upper + lower) / 2.0;
+        double middle = (upper + lower) / 2.0;
         // cout << "In calculating " << upper << " " << lower << " " << middle << endl;
-        float ascentPos = calcDist(middle, ascent);
-        float descentPos = totalDist - calcDist(middle, descent);
+        double ascentPos = calcDist(middle, ascent);
+        double descentPos = totalDist - calcDist(middle, descent);
         // cout << ascentPos << " " << descentPos << endl;
         if (ascentPos >= descentPos) {
             // they passed each other
