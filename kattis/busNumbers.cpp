@@ -1,33 +1,33 @@
-#include <iostream>
 #include <vector>
-#include <algorithm>
-#include <cmath>
+#include <iostream>
+#include <math.h>
+#include <unordered_map>
 
 using namespace std;
 
 int main() {
-
     int m; cin >> m;
-    if (m < 102) {
-        cout << "none" << endl;
-        return 0;
+    vector<long long> cubes;
+    for (long long i = 0; i < 74; ++i) {
+        cubes.push_back(pow(i, 3));
     }
 
-    vector<long long int> busNumbers;
-    for (int i = 1; i <= 73; ++i) {
-        for (int j = i; j <= 73; ++j) {
-            long long int cubeI = pow(i, 3);
-            long long int cubeJ = pow(j, 3);
-            busNumbers.push_back(cubeI + cubeJ);
+    unordered_map<long long, int> busNums;
+    for (int i = 0; i < cubes.size(); ++i) {
+        for (int j = i + 1; j < cubes.size(); ++j) {
+            busNums[cubes[i] + cubes[j]]++;
         }
     }
-    sort(busNumbers.begin(), busNumbers.end());
-    int index = busNumbers.size() - 1;
-    while (busNumbers[index] > m) {
-        index--;
+
+    long long busNum = 0;
+    for (auto n : busNums) {
+        if (n.second > 1 && n.first <= m) {
+            busNum = max(busNum, n.first);
+        }
     }
 
-    cout << busNumbers[index] << endl;
+    if (busNum) cout << busNum << endl;
+    else cout << "none" << endl;
 
     return 0;
 }
