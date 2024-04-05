@@ -9,6 +9,16 @@
         "unordered_map": "cpp",
         "stack": "cpp",
         "unordered_set": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "cmath": "cpp",
+        "queue": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "ranges": "cpp",
+        "span": "cpp",
+        "xlocinfo": "cpp",
+        "xtree": "cpp",
+        "xutility": "cpp"
     }
 }
