@@ -118,51 +118,54 @@ double getDist(Point2D p1, Point2D p2) {
 }
 
 int main() {
-    int n, m, s, v; cin >> n >> m >> s >> v;
-    double radius = (s * v); // gophers can reach within this radius
+    int n, m, s, v; 
+    while (cin >> n) {
+        cin >> m >> s >> v;
+        double radius = (s * v); // gophers can reach within this radius
 
-    MaxFlow maxFlow(n + m + 2); // nodes for both the gophers and the holes
-    vector<Point2D> nodes(n + m + 2); // represents gophers and holes; last 2 are source and sink
-    Point2D source(0, 0);
-    Point2D sink(0, 0);
-    nodes[n + m] = source;
-    nodes[n + m + 1] = sink;
-    
-    // PAY ATTENTION TO DIRECTIONS
+        MaxFlow maxFlow(n + m + 2); // nodes for both the gophers and the holes
+        vector<Point2D> nodes(n + m + 2); // represents gophers and holes; last 2 are source and sink
+        Point2D source(0, 0);
+        Point2D sink(0, 0);
+        nodes[n + m] = source;
+        nodes[n + m + 1] = sink;
+        
+        // PAY ATTENTION TO DIRECTIONS
 
-    // first n represent gophers
-    for (int i = 0; i < n; ++i) {
-        double x, y; cin >> x >> y;
-        Point2D pt(x, y);
-        nodes[i] = pt;
-        maxFlow.add_edge(n + m, i, 1);
-        // cout << "Adding source to " << i << endl;
-    }
+        // first n represent gophers
+        for (int i = 0; i < n; ++i) {
+            double x, y; cin >> x >> y;
+            Point2D pt(x, y);
+            nodes[i] = pt;
+            maxFlow.add_edge(n + m, i, 1);
+            // cout << "Adding source to " << i << endl;
+        }
 
-    // last m represent holes
-    for (int i = 0; i < m; ++i) {
-        double x, y; cin >> x >> y;
-        Point2D pt(x, y);
-        nodes[n + i] = pt;
-        maxFlow.add_edge(n + i, n + m + 1, 1);
-        // cout << "Adding " << n + i << " to sink" << endl;
-    }
+        // last m represent holes
+        for (int i = 0; i < m; ++i) {
+            double x, y; cin >> x >> y;
+            Point2D pt(x, y);
+            nodes[n + i] = pt;
+            maxFlow.add_edge(n + i, n + m + 1, 1);
+            // cout << "Adding " << n + i << " to sink" << endl;
+        }
 
-    // create bipartite graph
-    for (int i = 0; i < n; ++i) {
-        Point2D currGopher = nodes[i];
-        for (int j = 0; j < m; ++j) {
-            Point2D currHole = nodes[n + j];
-            double dist = getDist(currGopher, currHole);
-            if (dist <= radius) {
-                // cout << "Adding edge " << i << "->" << n + j << endl;
-                maxFlow.add_edge(i, n + j, 1); // each hole has a max capacity 1
+        // create bipartite graph
+        for (int i = 0; i < n; ++i) {
+            Point2D currGopher = nodes[i];
+            for (int j = 0; j < m; ++j) {
+                Point2D currHole = nodes[n + j];
+                double dist = getDist(currGopher, currHole);
+                if (dist <= radius) {
+                    // cout << "Adding edge " << i << "->" << n + j << endl;
+                    maxFlow.add_edge(i, n + j, 1); // each hole has a max capacity 1
+                }
             }
         }
-    }
 
-    int gophersSaved = maxFlow.edmonds_karp(n + m, n + m + 1);
-    cout << (n - gophersSaved) << endl;
+        int gophersSaved = maxFlow.edmonds_karp(n + m, n + m + 1);
+        cout << (n - gophersSaved) << endl;
+    }
 
     return 0;
 }
