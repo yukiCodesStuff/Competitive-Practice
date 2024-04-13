@@ -1,41 +1,41 @@
 #include <iostream>
 #include <vector>
-#include <utility>
+#include <queue>
 #include <algorithm>
+#include <utility>
 
 using namespace std;
 
 int main() {
     int n, m; cin >> n >> m;
-    vector<pair<int, int>> intervals;
+    vector<pair<int, int>> reqs(n); // requests
     for (int i = 0; i < n; ++i) {
-        int x, y; cin >> x >> y;
-        intervals.push_back(make_pair(x, y));
+        int a, b; cin >> a >> b; // start time : duration
+        reqs[i] = {a, a + b};
     }
 
-    vector<int> computers(n,0);
-    sort(intervals.begin(), intervals.end());
-    int lastFree = 0;
-    int unlocksSaved = 0;
-    for (int i = 0; i < intervals.size(); ++i) {
-        int start = intervals[i].first;
-        int end = intervals[i].first + intervals[i].second;
-        
-        // find next available station
-        int finderIndex = 0;
-        while (start < computers[finderIndex]) {
-            finderIndex++;
+    int saves = 0;
+    sort(reqs.begin(), reqs.end());
+    priority_queue<int, vector<int>, greater<int>> pq; // workstations
+    for (int i = 0; i < n; ++i) {
+        pair<int, int> currReq = reqs[i];
+        if (pq.empty()) {
+            pq.push(currReq.second);
+            continue;
+        }
+        int closestEndTime = pq.top();
+        if (currReq.first >= closestEndTime) {
+            // cout << "Saved with start time " << currReq.first << endl;
+            
+            // REMOVE AFTER EXPIRING
+            
+            pq.pop();
+            saves++;
         }
 
-        // cout << "Stopped at " << finderIndex << endl;
-
-        if (computers[finderIndex] != 0 && start - computers[finderIndex] <= m) {
-            unlocksSaved++;
-        }
-        computers[finderIndex] = end;
+        pq.push(currReq.second);
     }
 
-    cout << unlocksSaved << endl;
-
+    cout << saves << endl;
     return 0;
 }

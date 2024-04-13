@@ -99,22 +99,24 @@ public:
 };
 
 int main() {
-    
-    int V = 5; // Number of vertices in the graph
-    MaxFlow maxFlow(V);
+    int t; cin >> t;
+    while (t--) {
+        int n; cin >> n; // number of locations in town
+        int i, g, s; cin >> i >> g >> s; // start loc, num people, time left
+        int m; cin >> m; // number of medical facilities
+        for (int i = 0; i < m; ++i) {
+            int x; cin >> x; // location of medical facilities
+        }
 
-    maxFlow.add_edge(0, 1, 10); // Adding edge 0->1 with capacity 10
-    maxFlow.add_edge(0, 2, 5);  // Adding edge 0->2 with capacity 5
-    maxFlow.add_edge(1, 2, 15); // Adding edge 1->2 with capacity 15
-    maxFlow.add_edge(1, 3, 10); // Adding edge 1->3 with capacity 10
-    maxFlow.add_edge(2, 4, 10); // Adding edge 2->4 with capacity 10
-    maxFlow.add_edge(3, 2, 2);  // Adding edge 3->2 with capacity 2
-    maxFlow.add_edge(3, 4, 10); // Adding edge 3->4 with capacity 10
+        MaxFlow flow(n + 2);
+        int r; cin >> r; // number of roads in the town
+        for (int i = 0; i < r; ++i) {
+            int a, b, p, t; cin >> a >> b >> p >> t; // road from a to b with capacity p, time t to traverse
+            flow.add_edge(a, b, p);
+            if (b != s) flow.add_edge(b, n + 1, INF);
+        }
 
-    int s = 0; // Source vertex
-    int t = 4; // Sink vertex
-    double maxFlowValue = maxFlow.edmonds_karp(s, t);
-    cout << "The maximum flow from source to sink is: " << maxFlowValue << endl;
-
+        cout << "Max Flow: " << flow.edmonds_karp(i, n + 1) << endl;
+    }
     return 0;
 }

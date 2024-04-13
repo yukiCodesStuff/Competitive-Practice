@@ -52,3 +52,6 @@ int kosaraju() {
 
     return maxSizeComponent;
 }
+
+
+// REMEMBER TO SET ADJ LIST AND TRANSPOSE AND VISITED
