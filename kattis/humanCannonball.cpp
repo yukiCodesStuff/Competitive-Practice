@@ -72,17 +72,6 @@ int main() {
         visited[cannon] = false;
         adj[start].push_back(cannon);
         adj[cannon].push_back(end);
-        // for (auto n : adj) {
-        // //     if (n.first == start) {
-        // //         adj[cannon].push_back(n.first);
-        // //         adj[n.first].push_back({getTime(n.first, cannon, true), cannon});
-        // //     } else {
-        // //         adj[cannon].push_back({getTime(n.first, cannon), n.first});
-        // //         adj[n.first].push_back({getTime(n.first, cannon), cannon});
-        // //     }
-        //     adj[cannon].push_back(n.first);
-        //     adj[n.first].push_back(cannon);
-        // }
     }
 
     // make complete graph
@@ -116,8 +105,6 @@ int main() {
                     pq.push({getTime(currNode, nei, true) + currTime, nei});
                 } else {
                     pq.push({getTime(currNode, nei) + currTime, nei});
-                    // cout << currNode.first << "," << currNode.second << "->" << nei.first << "," << nei.second << " " << getTime(currNode, nei) << endl;
-                    // visited[nei.second] = true;
                 }
             }
         }
