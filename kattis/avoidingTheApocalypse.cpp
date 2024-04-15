@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <tuple>
 
 using namespace std;
 
@@ -101,22 +102,51 @@ public:
 int main() {
     int t; cin >> t;
     while (t--) {
-        int n; cin >> n; // number of locations in town
-        int i, g, s; cin >> i >> g >> s; // start loc, num people, time left
-        int m; cin >> m; // number of medical facilities
+        int n; cin >> n; // num locations
+        int srcState, g, s; cin >> srcState >> g >> s; // start, people, units of time
+        srcState--; // 0 indexing
+        s++; // account for time 0
+        
+        MaxFlow flow(s * n + 2); // 2d grid representing states (time) and city
+        int sink = s * n + 1;
+        int source = s * n;
+        int startNode = ((s - 1) * n) + srcState; // start at start time
+        flow.add_edge(source, startNode, g);
+
+        
+        int m; cin >> m; // num medical facilites
+        vector<int> medLocations(m, 0); // is med location
         for (int i = 0; i < m; ++i) {
-            int x; cin >> x; // location of medical facilities
+            cin >> medLocations[i];
         }
 
-        MaxFlow flow(n + 2);
-        int r; cin >> r; // number of roads in the town
+        // make edges
+        int r; cin >> r;
         for (int i = 0; i < r; ++i) {
-            int a, b, p, t; cin >> a >> b >> p >> t; // road from a to b with capacity p, time t to traverse
-            flow.add_edge(a, b, p);
-            if (b != s) flow.add_edge(b, n + 1, INF);
+            int a, b, p, t; cin >> a >> b >> p >> t;
+            a--; b--; // 0 indexing
+            int k = s - t - 1; // time states we have to traverse
+            for (int j = s - 1; k > -1; --j) {
+                int fromNode = (j * n) + a;
+                int toNode = (k * n) + b;
+                // cout << fromNode << "->" << toNode << " with cap " << p << endl;
+                flow.add_edge(fromNode, toNode, p);
+                --k;
+            }
         }
 
-        cout << "Max Flow: " << flow.edmonds_karp(i, n + 1) << endl;
+        for (int i = 0; i < n; ++i) {
+            if (medLocations[i]) {
+                for (int j = s - 1; j > -1; --j) {
+                    int fromNode = (j * n) + i;
+                    flow.add_edge(fromNode, sink, INF);
+                }
+            }
+        }
+
+        // cout << "Max Flow: " << flow.dinic(source, sink) << endl;
+        cout << flow.dinic(source, sink) << endl;
     }
+
     return 0;
 }
