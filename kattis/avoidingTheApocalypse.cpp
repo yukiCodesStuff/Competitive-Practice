@@ -125,31 +125,40 @@ int main() {
         vector<int> medLocations(m, 0); // is med location
         for (int i = 0; i < m; ++i) {
             int medLocation; cin >> medLocation;
-            medLocations[medLocation] = 1;
+            medLocation--;
+            for (int j = 0; j < s; ++j) {
+                int from = idxMap[j][medLocation];
+                // cout << "From " << from << endl;
+                flow.add_edge(from, sink, INF);
+            }
         }
+
+        // cout << "added meds" << endl;
 
         // make edges
         int r; cin >> r;
         for (int i = 0; i < r; ++i) {
             int a, b, p, t; cin >> a >> b >> p >> t;
             a--; b--; // 0 indexing
-            for (int i = t; i <= s; ++i) {
+            for (int i = t; i < s; ++i) {
                 int timeDiff = i - t;
-                int from = idxMap[a][timeDiff];
-                int to = idxMap[b][timeDiff];
-                cout << from << "->" << to << endl;
+                int from = idxMap[i][a];
+                int to = idxMap[timeDiff][b];
+                // cout << from << "->" << to << endl;
                 flow.add_edge(from, to, p);
             }
         }
 
+        // waiting at a spot
         for (int i = 0; i < n; ++i) {
-            if (medLocations[i]) {
-                for (int j = s - 1; j > -1; --j) {
-                    int fromNode = (j * n) + i;
-                    flow.add_edge(fromNode, sink, INF);
-                }
+            for (int j = s - 1; j > 0; --j) {
+                int from = idxMap[j][i];
+                int to = idxMap[j - 1][i];
+                // cout << from << "->" << to << endl;
+                flow.add_edge(from, to, INF);
             }
         }
+        // cout << "added waiting edges" << endl;
 
         cout << flow.dinic(source, sink) << endl;
     }
