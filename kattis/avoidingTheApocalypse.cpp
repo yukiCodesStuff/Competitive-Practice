@@ -112,14 +112,6 @@ int main() {
         int source = s * n;
         int startNode = ((s - 1) * n) + srcState; // start at start time
         flow.add_edge(source, startNode, g);
-
-        // so I won't have to do math for index
-        vector<vector<int>> idxMap(s, vector<int>(n, 0)); int idxVal = 0;
-        for (int i = 0; i < s; ++i) {
-            for (int j = 0; j < n; ++j) {
-                idxMap[i][j] = idxVal; ++idxVal;
-            }
-        }
         
         int m; cin >> m; // num medical facilites
         vector<int> medLocations(m, 0); // is med location
@@ -127,13 +119,10 @@ int main() {
             int medLocation; cin >> medLocation;
             medLocation--;
             for (int j = 0; j < s; ++j) {
-                int from = idxMap[j][medLocation];
-                // cout << "From " << from << endl;
+                int from = (j * n) + medLocation;
                 flow.add_edge(from, sink, INF);
             }
         }
-
-        // cout << "added meds" << endl;
 
         // make edges
         int r; cin >> r;
@@ -142,9 +131,8 @@ int main() {
             a--; b--; // 0 indexing
             for (int i = t; i < s; ++i) {
                 int timeDiff = i - t;
-                int from = idxMap[i][a];
-                int to = idxMap[timeDiff][b];
-                // cout << from << "->" << to << endl;
+                int from = (i * n) + a;
+                int to =  (timeDiff * n) + b;
                 flow.add_edge(from, to, p);
             }
         }
@@ -152,13 +140,11 @@ int main() {
         // waiting at a spot
         for (int i = 0; i < n; ++i) {
             for (int j = s - 1; j > 0; --j) {
-                int from = idxMap[j][i];
-                int to = idxMap[j - 1][i];
-                // cout << from << "->" << to << endl;
+                int from = (j * n) + i;
+                int to = ((j - 1) * n) + i;
                 flow.add_edge(from, to, INF);
             }
         }
-        // cout << "added waiting edges" << endl;
 
         cout << flow.dinic(source, sink) << endl;
     }
