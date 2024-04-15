@@ -113,11 +113,19 @@ int main() {
         int startNode = ((s - 1) * n) + srcState; // start at start time
         flow.add_edge(source, startNode, g);
 
+        // so I won't have to do math for index
+        vector<vector<int>> idxMap(s, vector<int>(n, 0)); int idxVal = 0;
+        for (int i = 0; i < s; ++i) {
+            for (int j = 0; j < n; ++j) {
+                idxMap[i][j] = idxVal; ++idxVal;
+            }
+        }
         
         int m; cin >> m; // num medical facilites
         vector<int> medLocations(m, 0); // is med location
         for (int i = 0; i < m; ++i) {
-            cin >> medLocations[i];
+            int medLocation; cin >> medLocation;
+            medLocations[medLocation] = 1;
         }
 
         // make edges
@@ -125,13 +133,12 @@ int main() {
         for (int i = 0; i < r; ++i) {
             int a, b, p, t; cin >> a >> b >> p >> t;
             a--; b--; // 0 indexing
-            int k = s - t - 1; // time states we have to traverse
-            for (int j = s - 1; k > -1; --j) {
-                int fromNode = (j * n) + a;
-                int toNode = (k * n) + b;
-                // cout << fromNode << "->" << toNode << " with cap " << p << endl;
-                flow.add_edge(fromNode, toNode, p);
-                --k;
+            for (int i = t; i <= s; ++i) {
+                int timeDiff = i - t;
+                int from = idxMap[a][timeDiff];
+                int to = idxMap[b][timeDiff];
+                cout << from << "->" << to << endl;
+                flow.add_edge(from, to, p);
             }
         }
 
@@ -144,7 +151,6 @@ int main() {
             }
         }
 
-        // cout << "Max Flow: " << flow.dinic(source, sink) << endl;
         cout << flow.dinic(source, sink) << endl;
     }
 
