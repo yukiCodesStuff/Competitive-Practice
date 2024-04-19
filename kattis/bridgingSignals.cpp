@@ -14,16 +14,17 @@ int main() {
         return 0;
     }
 
-    int n = nums.size();
-    std::vector<int> dp(n, 1);
-
-    for (int i = 1; i < n; ++i) {
-        for (int j = 0; j < i; ++j) {
-            if (nums[i] > nums[j]) {
-                dp[i] = std::max(dp[i], dp[j] + 1);
-            }
+   vector<int> sub;
+    sub.push_back(nums[0]);
+    for (int i = 1; i < nums.size(); ++i) {
+        if (nums[i] > sub[sub.size() - 1]) {
+            sub.push_back(nums[i]);
+        } else {
+            int subIndex = lower_bound(sub.begin(), sub.end(), nums[i]) - sub.begin();
+            sub[subIndex] = nums[i];
         }
     }
 
-    cout << *std::max_element(dp.begin(), dp.end()) << endl;
+    cout << sub.size() << endl;
+    return 0;
 }
