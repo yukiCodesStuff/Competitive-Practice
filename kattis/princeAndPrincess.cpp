@@ -1,34 +1,60 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <math.h>
+#include <unordered_map>
 
 using namespace std;
 
-const int x = 62507;
-const int y = 62507;
+int LIS(vector<int> &nums) {
+    if (nums.empty()) {
+        return 0;
+    }
+
+    vector<int> sub;
+    sub.push_back(nums[0]);
+    for (int i = 1; i < nums.size(); ++i) {
+        if (nums[i] > sub[sub.size() - 1]) {
+            sub.push_back(nums[i]);
+        } else {
+            int subIndex = lower_bound(sub.begin(), sub.end(), nums[i]) - sub.begin();
+            sub[subIndex] = nums[i];
+        }
+    }
+
+    return sub.size();
+}
 
 int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+
     int t; cin >> t;
     for (int c = 0; c < t; ++c) {
         int n, p, q; cin >> n >> p >> q;
-        vector<int> prince(p + 1);
-        vector<int> princess(q + 1);
-        for (int i = 0; i < p + 1; ++i) cin >> prince[i];
-        for (int i = 0; i < q + 1; ++i) cin >> princess[i];
+        p++; q++;
+        vector<int> a(p);
+        vector<int> b(q);
+        unordered_map<int, int> bMap;
+        for (int i = 0; i < p; ++i) {
+            cin >> a[i];
+        }
+        for (int i = 0; i < q; ++i) {
+            cin >> b[i];
+            bMap[b[i]] = i;
+        }
 
-        vector<vector<int>> dp(p + 1, vector<int>(q + 1, 0));
-        for (int i = 1; i <= p; ++i) {
-            for (int j = 1; j <= q; ++j) {
-                if (prince[i] == princess[j]) {
-                    dp[i][j] = 1 + dp[i-1][j-1];
-                } else {
-                    dp[i][j] = max(dp[i-1][j],dp[i][j-1]);
-                }
+        vector<int> aPrime;
+        for (int i = 0; i < p; ++i) {
+            if (bMap.find(a[i]) != bMap.end()) {
+                aPrime.push_back(bMap[a[i]]);
             }
         }
 
-        cout << "Case " << c + 1 << ": " << dp[p][q] + 1 << endl;
+        cout << "Case " << c + 1 << ": " << LIS(aPrime) << endl;
     }
 
     return 0;
 }
+
+// Remember that this approach only works if all elements are UNIQUE

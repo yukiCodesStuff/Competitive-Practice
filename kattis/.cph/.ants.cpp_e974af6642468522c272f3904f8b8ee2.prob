@@ -1,0 +1,1 @@
+{"name":"Local: ants","url":"c:\\Users\\yukij\\school\\Competitive-Practice\\kattis\\ants.cpp","tests":[{"id":1713557797490,"input":"2\n10 3\n2 6 7\n214 7\n11 12 7 13\n176 23 191","output":"4 8\n38 207"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"c:\\Users\\yukij\\school\\Competitive-Practice\\kattis\\ants.cpp","group":"local","local":true}
